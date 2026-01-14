@@ -1,23 +1,1514 @@
 <!DOCTYPE html>
 <html lang="en" class="dark">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Prajwal Shivakumar - Data Analyst Portfolio</title>
-<script src="https://cdn.tailwindcss.com"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prajwal Shivakumar | Data Analyst Portfolio</title>
+    <!-- Tailwind CSS with custom config -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#00f2ff',
+                        secondary: '#7c3aed',
+                        dark: '#0a0a0a'
+                    },
+                    animation: {
+                        'float': 'float 6s ease-in-out infinite',
+                        'pulse-slow': 'pulse 3s ease-in-out infinite',
+                        'text-shimmer': 'text-shimmer 2s ease-in-out infinite alternate',
+                        'border-glow': 'border-glow 2s ease-in-out infinite alternate',
+                        'data-wave': 'data-wave 8s linear infinite',
+                        'scan-line': 'scan-line 3s linear infinite',
+                        'matrix-rain': 'matrix-rain 1.5s linear infinite',
+                        'particle-float': 'particle-float var(--duration) ease-in-out infinite',
+                        'code-typing': 'code-typing 4s steps(40) infinite'
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0px)' },
+                            '50%': { transform: 'translateY(-20px)' }
+                        },
+                        'text-shimmer': {
+                            '0%': { backgroundPosition: '0% 50%' },
+                            '100%': { backgroundPosition: '100% 50%' }
+                        },
+                        'border-glow': {
+                            '0%': { boxShadow: '0 0 5px #00f2ff, 0 0 10px #00f2ff, 0 0 15px #00f2ff, 0 0 20px #00f2ff' },
+                            '100%': { boxShadow: '0 0 10px #00f2ff, 0 0 20px #00f2ff, 0 0 30px #00f2ff, 0 0 40px #00f2ff' }
+                        },
+                        'data-wave': {
+                            '0%, 100%': { transform: 'translateX(0) translateY(0)' },
+                            '25%': { transform: 'translateX(-10px) translateY(5px)' },
+                            '50%': { transform: 'translateX(0) translateY(10px)' },
+                            '75%': { transform: 'translateX(10px) translateY(5px)' }
+                        },
+                        'scan-line': {
+                            '0%': { transform: 'translateY(-100%)' },
+                            '100%': { transform: 'translateY(100vh)' }
+                        },
+                        'matrix-rain': {
+                            '0%': { transform: 'translateY(-100%)' },
+                            '100%': { transform: 'translateY(100%)' }
+                        },
+                        'particle-float': {
+                            '0%, 100%': { transform: 'translate(var(--x), var(--y)) scale(1)' },
+                            '50%': { transform: 'translate(calc(var(--x) + 10px), calc(var(--y) - 15px)) scale(1.2)' }
+                        },
+                        'code-typing': {
+                            '0%': { width: '0' },
+                            '50%': { width: '100%' },
+                            '100%': { width: '0' }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Custom CSS for advanced effects -->
+    <style>
+        :root {
+            --cursor-x: 0px;
+            --cursor-y: 0px;
+            --scroll-percentage: 0;
+            --particle-count: 0;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background-color: #0a0a0a;
+            color: #f0f0f0;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            overflow-x: hidden;
+            cursor: none;
+        }
+        
+        /* Custom cursor */
+        .cursor {
+            position: fixed;
+            width: 8px;
+            height: 8px;
+            background: #00f2ff;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            mix-blend-mode: difference;
+            transition: transform 0.1s ease, width 0.3s ease, height 0.3s ease;
+            transform: translate(-50%, -50%) scale(1);
+            filter: drop-shadow(0 0 8px #00f2ff);
+        }
+        
+        .cursor-trail {
+            position: fixed;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9998;
+            transform: translate(-50%, -50%);
+            background: radial-gradient(circle, #00f2ff22 0%, transparent 70%);
+            transition: all 0.3s ease;
+        }
+        
+        /* Dynamic background based on cursor */
+        .cursor-glow {
+            position: fixed;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: -1;
+            background: 
+                radial-gradient(circle at var(--cursor-x) var(--cursor-y), 
+                    rgba(0, 242, 255, 0.1) 0%, 
+                    transparent 50%),
+                radial-gradient(circle at calc(var(--cursor-x) + 100px) calc(var(--cursor-y) + 100px), 
+                    rgba(124, 58, 237, 0.05) 0%, 
+                    transparent 40%);
+            transition: background 0.2s ease;
+        }
+        
+        /* Scroll progress indicator */
+        .scroll-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: var(--scroll-percentage);
+            height: 3px;
+            background: linear-gradient(90deg, #00f2ff, #7c3aed);
+            z-index: 10000;
+            transition: width 0.1s ease;
+            box-shadow: 0 0 20px #00f2ff;
+        }
+        
+        /* Data grid background */
+        .data-grid {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(0, 242, 255, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 242, 255, 0.05) 1px, transparent 1px);
+            background-size: 50px 50px;
+            transform-origin: center;
+            pointer-events: none;
+            z-index: -2;
+            animation: data-wave 8s linear infinite;
+        }
+        
+        /* Scan line effect */
+        .scan-line {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #00f2ff, transparent);
+            pointer-events: none;
+            z-index: -1;
+            opacity: 0.3;
+            animation: scan-line 3s linear infinite;
+        }
+        
+        /* Magnetic button effect */
+        .magnetic {
+            transition: transform 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .magnetic::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+        
+        .magnetic:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+        
+        /* Glass morphism */
+        .glass {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        /* Scroll-reactive sections */
+        .section {
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 1s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+        }
+        
+        .section.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        /* Typewriter effect */
+        .typewriter {
+            overflow: hidden;
+            border-right: 2px solid #00f2ff;
+            white-space: nowrap;
+            animation: typing 3.5s steps(40, end), blink-caret 0.75s step-end infinite;
+        }
+        
+        @keyframes typing {
+            from { width: 0 }
+            to { width: 100% }
+        }
+        
+        @keyframes blink-caret {
+            from, to { border-color: transparent }
+            50% { border-color: #00f2ff }
+        }
+        
+        /* Particle effect */
+        .data-particle {
+            position: fixed;
+            width: 3px;
+            height: 3px;
+            background-color: #00f2ff;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: -1;
+            filter: drop-shadow(0 0 3px #00f2ff);
+        }
+        
+        /* Skill bar animations */
+        .skill-bar {
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .skill-bar::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            animation: shimmer 2s infinite;
+        }
+        
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+        
+        .skill-container.active .skill-bar {
+            transform: scaleX(1);
+        }
+        
+        /* Code terminal effect */
+        .terminal-line {
+            font-family: 'Courier New', monospace;
+            color: #00ff41;
+            text-shadow: 0 0 5px #00ff41;
+            opacity: 0;
+            transform: translateX(-20px);
+            transition: all 0.5s ease;
+        }
+        
+        .terminal-line.active {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        
+        /* Data flow lines */
+        .data-flow {
+            position: absolute;
+            width: 100%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, #00f2ff, transparent);
+            opacity: 0.1;
+        }
+        
+        /* Scroll-reactive text */
+        .scroll-text {
+            background: linear-gradient(90deg, #00f2ff, #7c3aed);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            background-size: 200% 100%;
+            animation: text-shimmer 3s infinite;
+        }
+        
+        /* Hover data sparkles */
+        .sparkle-container {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .sparkle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: #00f2ff;
+            border-radius: 50%;
+            pointer-events: none;
+            opacity: 0;
+        }
+        
+        /* Grid distortion effect */
+        .grid-distort {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            background-image: 
+                linear-gradient(rgba(0, 242, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 242, 255, 0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+            transition: transform 0.3s ease;
+        }
+        
+        /* Certification cards */
+        .certification-card {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .certification-card:hover {
+            box-shadow: 0 10px 30px rgba(0, 242, 255, 0.1);
+            border-color: rgba(0, 242, 255, 0.3);
+        }
+        
+        .certification-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, transparent 30%, rgba(0, 242, 255, 0.05) 50%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .certification-card:hover::before {
+            opacity: 1;
+        }
+    </style>
 </head>
-<body class="bg-dark" style="background-color: #0a0a0a; color: #f0f0f0; font-family: Inter, -apple-system, BlinkMacSystemFont, sans-serif;">
-<h1 style="text-align: center; padding: 50px; font-size: 3em;">Prajwal Shivakumar</h1>
-<h2 style="text-align: center; font-size: 1.5em; color: #00f2ff;">Data Analyst Portfolio</h2>
-<p style="text-align: center; padding: 20px; font-size: 1.2em;">Building production-ready AI/ML applications and data analytics engines</p>
-<div style="text-align: center; padding: 40px;">
-<p>📧 Email: <a href="mailto:prajwalshivakumar2005@gmail.com" style="color: #00f2ff;">prajwalshivakumar2005@gmail.com</a></p>
-<p>💼 LinkedIn: <a href="https://linkedin.com/in/prajwal-shivakumar-72081a384" target="_blank" style="color: #00f2ff;">prajwal-shivakumar</a></p>
-<p>💻 GitHub: <a href="https://github.com/prajwal185" target="_blank" style="color: #00f2ff;">prajwal185</a></p>
-</div>
-<div style="text-align: center; padding: 40px;">
-<h3 style="font-size: 1.5em; margin-bottom: 20px;">Skills</h3>
-<p>Python Data Science | SQL Databases | Tableau & Power BI | Machine Learning | Statistics | AWS</p>
-</div>
+<body class="bg-dark">
+    <!-- Scroll Progress Bar -->
+    <div class="scroll-progress"></div>
+    
+    <!-- Dynamic Backgrounds -->
+    <div class="cursor-glow"></div>
+    <div class="data-grid"></div>
+    <div class="scan-line"></div>
+    
+    <!-- Custom Cursor -->
+    <div class="cursor"></div>
+    <div id="cursor-trail" class="cursor-trail"></div>
+    
+    <!-- Main Container -->
+    <main class="relative z-10">
+        <!-- Hero Section -->
+        <section id="hero" class="min-h-screen flex flex-col justify-center px-6 md:px-12 lg:px-24 relative overflow-hidden">
+            <!-- Animated data flow lines -->
+            <div class="data-flow" style="top: 20%; animation-delay: 0s;"></div>
+            <div class="data-flow" style="top: 40%; animation-delay: 1s;"></div>
+            <div class="data-flow" style="top: 60%; animation-delay: 2s;"></div>
+            <div class="data-flow" style="top: 80%; animation-delay: 3s;"></div>
+            
+            <div class="max-w-6xl mx-auto relative z-10">
+                <!-- Animated badge -->
+                <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full glass mb-8 cursor-glow-effect">
+                    <div class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                    <span class="text-sm">Seeking Data Analyst Role</span>
+                    <div class="ml-2 px-2 py-1 bg-primary/10 text-primary rounded text-xs animate-pulse">
+                        Available Now
+                    </div>
+                </div>
+                
+                <!-- Main heading with cursor-reactive effect -->
+                <h1 class="text-5xl md:text-7xl lg:text-8xl font-bold mb-6 leading-tight cursor-reactive-text">
+                    <span class="block text-gradient bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent"
+                          data-cursor-magnetic>PRAJWAL</span>
+                    <span class="block text-white" data-cursor-magnetic>SHIVAKUMAR</span>
+                </h1>
+                
+                <!-- Dynamic typing text -->
+                <div class="h-16 mb-8 relative">
+                    <div id="dynamic-text" class="text-2xl md:text-3xl font-mono text-primary typewriter terminal-line active">
+                        >>> Transforming data into strategic insights _
+                    </div>
+                    <div class="absolute top-0 left-0 w-full h-full bg-gradient-to-r from-transparent via-primary/5 to-transparent animate-code-typing"></div>
+                </div>
+                
+                <!-- Terminal-like stats -->
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+                    <div class="terminal-line glass p-4 rounded-lg" style="transition-delay: 0.1s">
+                        <div class="text-2xl text-primary font-mono">95%</div>
+                        <div class="text-sm text-gray-400">Accuracy</div>
+                    </div>
+                    <div class="terminal-line glass p-4 rounded-lg" style="transition-delay: 0.2s">
+                        <div class="text-2xl text-primary font-mono">40%</div>
+                        <div class="text-sm text-gray-400">Efficiency</div>
+                    </div>
+                    <div class="terminal-line glass p-4 rounded-lg" style="transition-delay: 0.3s">
+                        <div class="text-2xl text-primary font-mono">85%</div>
+                        <div class="text-sm text-gray-400">Prediction</div>
+                    </div>
+                    <div class="terminal-line glass p-4 rounded-lg" style="transition-delay: 0.4s">
+                        <div class="text-2xl text-primary font-mono">∞</div>
+                        <div class="text-sm text-gray-400">Insights</div>
+                    </div>
+                </div>
+                
+                <!-- Magnetic buttons -->
+                <div class="flex flex-wrap gap-4 mb-12">
+                    <a href="#contact" 
+                       class="magnetic px-8 py-4 bg-gradient-to-r from-primary to-blue-600 rounded-lg font-semibold text-lg hover:shadow-[0_0_30px_rgba(0,242,255,0.5)] transition-all duration-300 relative overflow-hidden group"
+                       data-cursor-magnetic>
+                        <span class="relative z-10">Connect</span>
+                        <div class="absolute inset-0 bg-gradient-to-r from-primary/20 to-blue-600/20 transform -translate-x-full group-hover:translate-x-0 transition-transform duration-700"></div>
+                    </a>
+                    <a href="#projects" 
+                       class="magnetic px-8 py-4 glass rounded-lg font-semibold text-lg hover:border-primary/50 transition-all duration-300 relative overflow-hidden group"
+                       data-cursor-magnetic>
+                        <span class="relative z-10">View Projects</span>
+                        <div class="absolute inset-0 bg-gradient-to-r from-transparent via-primary/10 to-transparent transform -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
+                    </a>
+                </div>
+                
+                <!-- Scroll indicator -->
+                <div class="absolute bottom-12 left-1/2 transform -translate-x-1/2 animate-bounce cursor-pointer" id="scroll-indicator">
+                    <div class="w-6 h-10 border-2 border-primary/50 rounded-full flex justify-center hover:border-primary hover:scale-110 transition-all">
+                        <div class="w-1 h-3 bg-primary rounded-full mt-2 animate-pulse"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- About Section -->
+        <section id="about" class="section py-20 px-6 md:px-12 lg:px-24 relative">
+            <div class="max-w-6xl mx-auto">
+                <div class="grid md:grid-cols-2 gap-12 items-center">
+                    <div class="relative">
+                        <h2 class="text-4xl font-bold mb-6 scroll-text">
+                            About Me
+                        </h2>
+                        <p class="text-xl text-gray-300 mb-6 leading-relaxed">
+                            Data analyst with expertise in <span class="text-primary">statistical modeling</span>, 
+                            <span class="text-primary">machine learning</span>, and 
+                            <span class="text-primary">business intelligence</span>. 
+                            Transforming complex datasets into actionable insights that drive strategic decisions.
+                        </p>
+                        <p class="text-lg text-gray-400 mb-8">
+                            Specialized in developing predictive models, interactive dashboards, and automated 
+                            analytics frameworks. Passionate about uncovering patterns and telling stories through data.
+                        </p>
+                        
+                        <!-- Interactive skill chips -->
+                        <div class="flex flex-wrap gap-3">
+                            <span class="px-4 py-2 glass rounded-full text-sm hover:scale-105 hover:border-primary transition-all cursor-pointer"
+                                  data-cursor-magnetic>Python</span>
+                            <span class="px-4 py-2 glass rounded-full text-sm hover:scale-105 hover:border-primary transition-all cursor-pointer"
+                                  data-cursor-magnetic>SQL</span>
+                            <span class="px-4 py-2 glass rounded-full text-sm hover:scale-105 hover:border-primary transition-all cursor-pointer"
+                                  data-cursor-magnetic>Tableau</span>
+                            <span class="px-4 py-2 glass rounded-full text-sm hover:scale-105 hover:border-primary transition-all cursor-pointer"
+                                  data-cursor-magnetic>Machine Learning</span>
+                            <span class="px-4 py-2 glass rounded-full text-sm hover:scale-105 hover:border-primary transition-all cursor-pointer"
+                                  data-cursor-magnetic>Statistics</span>
+                        </div>
+                    </div>
+                    <div class="relative sparkle-container">
+                        <div class="glass rounded-2xl p-8 hover:scale-[1.02] transition-transform duration-500">
+                            <div class="grid grid-cols-2 gap-6">
+                                <div class="text-center p-6 rounded-xl bg-gradient-to-br from-primary/10 to-transparent hover:from-primary/20 transition-all duration-300 hover:translate-y-[-5px]">
+                                    <div class="text-3xl mb-2 animate-float" style="animation-delay: 0s">📊</div>
+                                    <h3 class="font-bold text-2xl">95%</h3>
+                                    <p class="text-sm text-gray-400">Detection Accuracy</p>
+                                </div>
+                                <div class="text-center p-6 rounded-xl bg-gradient-to-br from-primary/10 to-transparent hover:from-primary/20 transition-all duration-300 hover:translate-y-[-5px]">
+                                    <div class="text-3xl mb-2 animate-float" style="animation-delay: 0.2s">🚀</div>
+                                    <h3 class="font-bold text-2xl">40%</h3>
+                                    <p class="text-sm text-gray-400">Quality Improvement</p>
+                                </div>
+                                <div class="text-center p-6 rounded-xl bg-gradient-to-br from-primary/10 to-transparent hover:from-primary/20 transition-all duration-300 hover:translate-y-[-5px]">
+                                    <div class="text-3xl mb-2 animate-float" style="animation-delay: 0.4s">📈</div>
+                                    <h3 class="font-bold text-2xl">85%</h3>
+                                    <p class="text-sm text-gray-400">Predictive Accuracy</p>
+                                </div>
+                                <div class="text-center p-6 rounded-xl bg-gradient-to-br from-primary/10 to-transparent hover:from-primary/20 transition-all duration-300 hover:translate-y-[-5px]">
+                                    <div class="text-3xl mb-2 animate-float" style="animation-delay: 0.6s">🎯</div>
+                                    <h3 class="font-bold text-2xl">30%</h3>
+                                    <p class="text-sm text-gray-400">Engagement Increase</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Skills Section with Interactive Bars -->
+        <section id="skills" class="section py-20 px-6 md:px-12 lg:px-24 bg-gradient-to-b from-dark to-black relative overflow-hidden">
+            <!-- Animated background particles -->
+            <div id="skill-particles" class="absolute inset-0 pointer-events-none"></div>
+            
+            <div class="max-w-6xl mx-auto relative z-10">
+                <h2 class="text-4xl font-bold mb-12 text-center scroll-text">
+                    Technical Expertise
+                </h2>
+                
+                <div class="grid md:grid-cols-2 gap-12">
+                    <!-- Left Column -->
+                    <div>
+                        <div class="skill-container mb-8 group" data-skill="python">
+                            <div class="flex justify-between mb-2">
+                                <span class="font-semibold group-hover:text-primary transition-colors">Python & Data Science</span>
+                                <span class="text-primary animate-pulse">95%</span>
+                            </div>
+                            <div class="w-full h-2 glass rounded-full overflow-hidden cursor-pointer hover:scale-y-125 transition-transform">
+                                <div class="skill-bar h-full bg-gradient-to-r from-primary to-blue-500" style="width: 95%"></div>
+                            </div>
+                            <p class="text-sm text-gray-400 mt-2">Pandas, NumPy, Scikit-learn, Statistical Modeling</p>
+                        </div>
+                        
+                        <div class="skill-container mb-8 group" data-skill="sql">
+                            <div class="flex justify-between mb-2">
+                                <span class="font-semibold group-hover:text-primary transition-colors">SQL & Databases</span>
+                                <span class="text-primary animate-pulse">90%</span>
+                            </div>
+                            <div class="w-full h-2 glass rounded-full overflow-hidden cursor-pointer hover:scale-y-125 transition-transform">
+                                <div class="skill-bar h-full bg-gradient-to-r from-primary to-blue-500" style="width: 90%"></div>
+                            </div>
+                            <p class="text-sm text-gray-400 mt-2">MySQL, SQL Server, Query Optimization, ETL</p>
+                        </div>
+                        
+                        <div class="skill-container mb-8 group" data-skill="viz">
+                            <div class="flex justify-between mb-2">
+                                <span class="font-semibold group-hover:text-primary transition-colors">Data Visualization</span>
+                                <span class="text-primary animate-pulse">92%</span>
+                            </div>
+                            <div class="w-full h-2 glass rounded-full overflow-hidden cursor-pointer hover:scale-y-125 transition-transform">
+                                <div class="skill-bar h-full bg-gradient-to-r from-primary to-blue-500" style="width: 92%"></div>
+                            </div>
+                            <p class="text-sm text-gray-400 mt-2">Tableau, Power BI, Excel Dashboards</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Right Column -->
+                    <div>
+                        <div class="skill-container mb-8 group" data-skill="ml">
+                            <div class="flex justify-between mb-2">
+                                <span class="font-semibold group-hover:text-primary transition-colors">Machine Learning</span>
+                                <span class="text-primary animate-pulse">88%</span>
+                            </div>
+                            <div class="w-full h-2 glass rounded-full overflow-hidden cursor-pointer hover:scale-y-125 transition-transform">
+                                <div class="skill-bar h-full bg-gradient-to-r from-primary to-blue-500" style="width: 88%"></div>
+                            </div>
+                            <p class="text-sm text-gray-400 mt-2">Predictive Analytics, Feature Engineering, Model Validation</p>
+                        </div>
+                        
+                        <div class="skill-container mb-8 group" data-skill="stats">
+                            <div class="flex justify-between mb-2">
+                                <span class="font-semibold group-hover:text-primary transition-colors">Statistical Analysis</span>
+                                <span class="text-primary animate-pulse">93%</span>
+                            </div>
+                            <div class="w-full h-2 glass rounded-full overflow-hidden cursor-pointer hover:scale-y-125 transition-transform">
+                                <div class="skill-bar h-full bg-gradient-to-r from-primary to-blue-500" style="width: 93%"></div>
+                            </div>
+                            <p class="text-sm text-gray-400 mt-2">Hypothesis Testing, A/B Testing, Anomaly Detection</p>
+                        </div>
+                        
+                        <div class="skill-container mb-8 group" data-skill="tools">
+                            <div class="flex justify-between mb-2">
+                                <span class="font-semibold group-hover:text-primary transition-colors">Analytics Tools</span>
+                                <span class="text-primary animate-pulse">87%</span>
+                            </div>
+                            <div class="w-full h-2 glass rounded-full overflow-hidden cursor-pointer hover:scale-y-125 transition-transform">
+                                <div class="skill-bar h-full bg-gradient-to-r from-primary to-blue-500" style="width: 87%"></div>
+                            </div>
+                            <p class="text-sm text-gray-400 mt-2">Advanced Excel, Git, Jupyter, Data Mining</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Experience Timeline -->
+        <section id="experience" class="section py-20 px-6 md:px-12 lg:px-24 relative">
+            <div class="max-w-6xl mx-auto">
+                <h2 class="text-4xl font-bold mb-12 text-center scroll-text">
+                    Experience Timeline
+                </h2>
+                
+                <div class="relative">
+                    <!-- Timeline line -->
+                    <div class="absolute left-1/2 transform -translate-x-1/2 h-full w-0.5 bg-gradient-to-b from-primary/0 via-primary to-primary/0"></div>
+                    
+                    <!-- Timeline items -->
+                    <div class="space-y-12">
+                        <!-- Deloitte -->
+                        <div class="timeline-item relative w-full md:w-1/2 ml-auto md:pr-12">
+                            <div class="glass p-6 rounded-xl border-l-4 border-primary hover:border-primary/70 transition-all duration-300 group hover:scale-[1.02]"
+                                 data-cursor-expand>
+                                <div class="flex justify-between items-start mb-4">
+                                    <h3 class="text-xl font-bold group-hover:text-primary transition-colors">Data Consultant</h3>
+                                    <span class="text-primary font-mono text-sm animate-pulse">Deloitte Australia</span>
+                                </div>
+                                <ul class="space-y-2 text-gray-300">
+                                    <li class="flex items-start group">
+                                        <span class="text-primary mr-2">•</span>
+                                        <span>Applied ML for anomaly detection with 95% accuracy</span>
+                                    </li>
+                                    <li class="flex items-start group">
+                                        <span class="text-primary mr-2">•</span>
+                                        <span>Developed interactive Tableau dashboards for real-time KPI tracking</span>
+                                    </li>
+                                    <li class="flex items-start group">
+                                        <span class="text-primary mr-2">•</span>
+                                        <span>Improved data quality by 40% through advanced analytics</span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <!-- Tata Group -->
+                        <div class="timeline-item relative w-full md:w-1/2 md:pl-12">
+                            <div class="glass p-6 rounded-xl border-l-4 border-secondary hover:border-secondary/70 transition-all duration-300 group hover:scale-[1.02]"
+                                 data-cursor-expand>
+                                <div class="flex justify-between items-start mb-4">
+                                    <h3 class="text-xl font-bold group-hover:text-secondary transition-colors">Data Scientist</h3>
+                                    <span class="text-secondary font-mono text-sm animate-pulse">Tata Group</span>
+                                </div>
+                                <ul class="space-y-2 text-gray-300">
+                                    <li class="flex items-start group">
+                                        <span class="text-secondary mr-2">•</span>
+                                        <span>Built ML models for customer delinquency prediction (85% accuracy)</span>
+                                    </li>
+                                    <li class="flex items-start group">
+                                        <span class="text-secondary mr-2">•</span>
+                                        <span>Designed no-code predictive modeling framework</span>
+                                    </li>
+                                    <li class="flex items-start group">
+                                        <span class="text-secondary mr-2">•</span>
+                                        <span>Engineered automated collections strategy using agentic AI</span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <!-- Education -->
+                        <div class="timeline-item relative w-full md:w-1/2 ml-auto md:pr-12">
+                            <div class="glass p-6 rounded-xl border-l-4 border-primary hover:border-primary/70 transition-all duration-300 group hover:scale-[1.02]"
+                                 data-cursor-expand>
+                                <div class="flex justify-between items-start mb-4">
+                                    <h3 class="text-xl font-bold group-hover:text-primary transition-colors">BCA - Computer Applications</h3>
+                                    <span class="text-primary font-mono text-sm animate-pulse">Acharya B-School</span>
+                                </div>
+                                <p class="text-gray-300 mb-3">Specialized in Data Structures, Database Management, and Statistical Analysis</p>
+                                <div class="flex flex-wrap gap-2">
+                                    <span class="px-3 py-1 bg-primary/10 text-primary rounded-full text-sm hover:scale-110 transition-transform cursor-pointer">BCG Certification</span>
+                                    <span class="px-3 py-1 bg-primary/10 text-primary rounded-full text-sm hover:scale-110 transition-transform cursor-pointer">Tata GenAI</span>
+                                    <span class="px-3 py-1 bg-primary/10 text-primary rounded-full text-sm hover:scale-110 transition-transform cursor-pointer">Deloitte Analytics</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Projects Grid -->
+        <section id="projects" class="section py-20 px-6 md:px-12 lg:px-24 bg-gradient-to-b from-black to-dark relative overflow-hidden">
+            <!-- Background grid distortion -->
+            <div class="grid-distort"></div>
+            
+            <div class="max-w-6xl mx-auto relative z-10">
+                <h2 class="text-4xl font-bold mb-12 text-center scroll-text">
+                    Featured Projects
+                </h2>
+                
+                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <!-- Project 1 -->
+                    <div class="project-card glass rounded-xl p-6 hover:transform hover:scale-105 transition-all duration-500 group relative overflow-hidden"
+                         data-cursor-project>
+                        <div class="absolute inset-0 bg-gradient-to-br from-primary/0 via-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                        <div class="relative z-10">
+                            <div class="w-14 h-14 rounded-lg bg-gradient-to-br from-primary/20 to-transparent flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                                <span class="text-2xl">👥</span>
+                            </div>
+                            <h3 class="text-xl font-bold mb-3 group-hover:text-primary transition-colors">Customer Segmentation</h3>
+                            <p class="text-gray-400 mb-4">Used Python and SQL with K-means clustering to segment customers, increasing engagement by 30%.</p>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="px-3 py-1 bg-primary/10 text-primary rounded-full text-sm">Python</span>
+                                <span class="px-3 py-1 bg-primary/10 text-primary rounded-full text-sm">SQL</span>
+                                <span class="px-3 py-1 bg-primary/10 text-primary rounded-full text-sm">K-means</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Project 2 -->
+                    <div class="project-card glass rounded-xl p-6 hover:transform hover:scale-105 transition-all duration-500 group relative overflow-hidden"
+                         data-cursor-project>
+                        <div class="absolute inset-0 bg-gradient-to-br from-primary/0 via-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                        <div class="relative z-10">
+                            <div class="w-14 h-14 rounded-lg bg-gradient-to-br from-primary/20 to-transparent flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                                <span class="text-2xl">📈</span>
+                            </div>
+                            <h3 class="text-xl font-bold mb-3 group-hover:text-primary transition-colors">Sales Dashboard</h3>
+                            <p class="text-gray-400 mb-4">Power BI dashboard with trend analysis and predictive models for sales optimization.</p>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="px-3 py-1 bg-primary/10 text-primary rounded-full text-sm">Power BI</span>
+                                <span class="px-3 py-1 bg-primary/10 text-primary rounded-full text-sm">ETL</span>
+                                <span class="px-3 py-1 bg-primary/10 text-primary rounded-full text-sm">Forecasting</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Project 3 -->
+                    <div class="project-card glass rounded-xl p-6 hover:transform hover:scale-105 transition-all duration-500 group relative overflow-hidden"
+                         data-cursor-project>
+                        <div class="absolute inset-0 bg-gradient-to-br from-primary/0 via-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                        <div class="relative z-10">
+                            <div class="w-14 h-14 rounded-lg bg-gradient-to-br from-primary/20 to-transparent flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                                <span class="text-2xl">🤖</span>
+                            </div>
+                            <h3 class="text-xl font-bold mb-3 group-hover:text-primary transition-colors">AI Risk Profiling</h3>
+                            <p class="text-gray-400 mb-4">ML models predicting customer delinquency with 85% accuracy using statistical analysis.</p>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="px-3 py-1 bg-primary/10 text-primary rounded-full text-sm">Machine Learning</span>
+                                <span class="px-3 py-1 bg-primary/10 text-primary rounded-full text-sm">Statistics</span>
+                                <span class="px-3 py-1 bg-primary/10 text-primary rounded-full text-sm">Risk Analysis</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Certifications Section -->
+        <section id="certifications" class="section py-20 px-6 md:px-12 lg:px-24 bg-gradient-to-b from-black to-dark relative overflow-hidden">
+            <div class="max-w-6xl mx-auto">
+                <h2 class="text-4xl font-bold mb-12 text-center scroll-text">
+                    <span class="text-gradient bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">Certifications</span> & Achievements
+                </h2>
+                
+                <!-- Certification Stats -->
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mb-12">
+                    <div class="text-center p-4 glass rounded-xl hover:scale-105 transition-transform duration-300">
+                        <div class="text-3xl font-bold text-primary mb-2">8+</div>
+                        <div class="text-sm text-gray-400">Certifications</div>
+                    </div>
+                    <div class="text-center p-4 glass rounded-xl hover:scale-105 transition-transform duration-300">
+                        <div class="text-3xl font-bold text-primary mb-2">6</div>
+                        <div class="text-sm text-gray-400">Job Simulations</div>
+                    </div>
+                    <div class="text-center p-4 glass rounded-xl hover:scale-105 transition-transform duration-300">
+                        <div class="text-3xl font-bold text-primary mb-2">4</div>
+                        <div class="text-sm text-gray-400">Industry Leaders</div>
+                    </div>
+                    <div class="text-center p-4 glass rounded-xl hover:scale-105 transition-transform duration-300">
+                        <div class="text-3xl font-bold text-primary mb-2">100%</div>
+                        <div class="text-sm text-gray-400">Completion Rate</div>
+                    </div>
+                </div>
+                
+                <!-- Certifications Grid -->
+                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Cisco Certification -->
+                    <div class="certification-card glass rounded-xl p-6 hover:transform hover:scale-[1.03] transition-all duration-500 group relative overflow-hidden"
+                         data-cursor-certification>
+                        <div class="absolute top-4 right-4 w-10 h-10 bg-gradient-to-br from-primary/20 to-transparent rounded-full flex items-center justify-center">
+                            <span class="text-lg">🎓</span>
+                        </div>
+                        <h3 class="text-lg font-bold mb-2 group-hover:text-primary transition-colors">Data Analytics Essentials</h3>
+                        <div class="flex items-center gap-2 mb-3">
+                            <div class="w-2 h-2 bg-blue-500 rounded-full"></div>
+                            <span class="text-sm text-gray-400">Cisco Networking Academy</span>
+                        </div>
+                        <p class="text-sm text-gray-300 mb-4">Comprehensive data analytics fundamentals from industry leader in networking and IT education</p>
+                        <div class="flex justify-between items-center">
+                            <span class="text-xs text-primary font-mono">Sep 2025</span>
+                            <div class="flex gap-1">
+                                <span class="w-2 h-2 bg-primary rounded-full animate-pulse"></span>
+                                <span class="w-2 h-2 bg-primary rounded-full animate-pulse" style="animation-delay: 0.2s"></span>
+                                <span class="w-2 h-2 bg-primary rounded-full animate-pulse" style="animation-delay: 0.4s"></span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Simplilearn Certification -->
+                    <div class="certification-card glass rounded-xl p-6 hover:transform hover:scale-[1.03] transition-all duration-500 group relative overflow-hidden"
+                         data-cursor-certification>
+                        <div class="absolute top-4 right-4 w-10 h-10 bg-gradient-to-br from-orange-500/20 to-transparent rounded-full flex items-center justify-center">
+                            <span class="text-lg">📊</span>
+                        </div>
+                        <h3 class="text-lg font-bold mb-2 group-hover:text-primary transition-colors">Introduction to Data Analytics</h3>
+                        <div class="flex items-center gap-2 mb-3">
+                            <div class="w-2 h-2 bg-orange-500 rounded-full"></div>
+                            <span class="text-sm text-gray-400">Simplilearn</span>
+                        </div>
+                        <p class="text-sm text-gray-300 mb-4">Fundamental data analytics concepts and techniques from leading professional training platform</p>
+                        <div class="flex justify-between items-center">
+                            <span class="text-xs text-primary font-mono">Aug 2025</span>
+                            <span class="text-xs glass px-2 py-1 rounded">Certificate: 8810283</span>
+                        </div>
+                    </div>
+                    
+                    <!-- IBM Certification -->
+                    <div class="certification-card glass rounded-xl p-6 hover:transform hover:scale-[1.03] transition-all duration-500 group relative overflow-hidden"
+                         data-cursor-certification>
+                        <div class="absolute top-4 right-4 w-10 h-10 bg-gradient-to-br from-blue-600/20 to-transparent rounded-full flex items-center justify-center">
+                            <span class="text-lg">🔵</span>
+                        </div>
+                        <h3 class="text-lg font-bold mb-2 group-hover:text-primary transition-colors">Data Fundamentals</h3>
+                        <div class="flex items-center gap-2 mb-3">
+                            <div class="w-2 h-2 bg-blue-600 rounded-full"></div>
+                            <span class="text-sm text-gray-400">IBM SkillsBuild</span>
+                        </div>
+                        <p class="text-sm text-gray-300 mb-4">Core data science fundamentals from global technology leader and innovator</p>
+                        <div class="flex justify-between items-center">
+                            <span class="text-xs text-primary font-mono">Nov 2025</span>
+                            <a href="https://www.credly.com/badges/d99dd2cc-9e7b-4943-b9cd-8b5ed165aca1" 
+                               target="_blank"
+                               class="text-xs text-primary hover:underline">Verify Credential</a>
+                        </div>
+                    </div>
+                    
+                    <!-- Power BI Certification -->
+                    <div class="certification-card glass rounded-xl p-6 hover:transform hover:scale-[1.03] transition-all duration-500 group relative overflow-hidden"
+                         data-cursor-certification>
+                        <div class="absolute top-4 right-4 w-10 h-10 bg-gradient-to-br from-yellow-500/20 to-transparent rounded-full flex items-center justify-center">
+                            <span class="text-lg">📈</span>
+                        </div>
+                        <h3 class="text-lg font-bold mb-2 group-hover:text-primary transition-colors">Power BI Workshop</h3>
+                        <div class="flex items-center gap-2 mb-3">
+                            <div class="w-2 h-2 bg-yellow-500 rounded-full"></div>
+                            <span class="text-sm text-gray-400">OfficeMaster</span>
+                        </div>
+                        <p class="text-sm text-gray-300 mb-4">AI-powered interactive dashboard creation in under 30 minutes</p>
+                        <div class="flex justify-between items-center">
+                            <span class="text-xs text-primary font-mono">Aug 2025</span>
+                            <span class="text-xs glass px-2 py-1 rounded">Verified</span>
+                        </div>
+                    </div>
+                    
+                    <!-- BCG Data Science Simulation -->
+                    <div class="certification-card glass rounded-xl p-6 hover:transform hover:scale-[1.03] transition-all duration-500 group relative overflow-hidden"
+                         data-cursor-certification>
+                        <div class="absolute top-4 right-4 w-10 h-10 bg-gradient-to-br from-green-500/20 to-transparent rounded-full flex items-center justify-center">
+                            <span class="text-lg">🔬</span>
+                        </div>
+                        <h3 class="text-lg font-bold mb-2 group-hover:text-primary transition-colors">Data Science Job Simulation</h3>
+                        <div class="flex items-center gap-2 mb-3">
+                            <div class="w-2 h-2 bg-green-500 rounded-full"></div>
+                            <span class="text-sm text-gray-400">BCG X via Forage</span>
+                        </div>
+                        <p class="text-sm text-gray-300 mb-4">Practical tasks in problem framing, EDA, data cleaning, feature engineering, modeling & evaluation</p>
+                        <div class="flex justify-between items-center">
+                            <span class="text-xs text-primary font-mono">Sep 2025</span>
+                            <span class="text-xs glass px-2 py-1 rounded">Job Simulation</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Deloitte Analytics Simulation -->
+                    <div class="certification-card glass rounded-xl p-6 hover:transform hover:scale-[1.03] transition-all duration-500 group relative overflow-hidden"
+                         data-cursor-certification>
+                        <div class="absolute top-4 right-4 w-10 h-10 bg-gradient-to-br from-green-600/20 to-transparent rounded-full flex items-center justify-center">
+                            <span class="text-lg">🏢</span>
+                        </div>
+                        <h3 class="text-lg font-bold mb-2 group-hover:text-primary transition-colors">Data Analytics Job Simulation</h3>
+                        <div class="flex items-center gap-2 mb-3">
+                            <div class="w-2 h-2 bg-green-600 rounded-full"></div>
+                            <span class="text-sm text-gray-400">Deloitte via Forage</span>
+                        </div>
+                        <p class="text-sm text-gray-300 mb-4">Real-world data analysis and forensic technology tasks from Big 4 consulting firm</p>
+                        <div class="flex justify-between items-center">
+                            <span class="text-xs text-primary font-mono">Sep 2025</span>
+                            <span class="text-xs glass px-2 py-1 rounded">Big 4 Experience</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Tata GenAI Simulation -->
+                    <div class="certification-card glass rounded-xl p-6 hover:transform hover:scale-[1.03] transition-all duration-500 group relative overflow-hidden"
+                         data-cursor-certification>
+                        <div class="absolute top-4 right-4 w-10 h-10 bg-gradient-to-br from-red-500/20 to-transparent rounded-full flex items-center justify-center">
+                            <span class="text-lg">🤖</span>
+                        </div>
+                        <h3 class="text-lg font-bold mb-2 group-hover:text-primary transition-colors">GenAI Powered Data Analytics</h3>
+                        <div class="flex items-center gap-2 mb-3">
+                            <div class="w-2 h-2 bg-red-500 rounded-full"></div>
+                            <span class="text-sm text-gray-400">Tata Group via Forage</span>
+                        </div>
+                        <p class="text-sm text-gray-300 mb-4">Exploratory analysis, risk profiling, AI delinquency prediction, and data storytelling</p>
+                        <div class="flex justify-between items-center">
+                            <span class="text-xs text-primary font-mono">Sep 2025</span>
+                            <span class="text-xs glass px-2 py-1 rounded">AI Integration</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Quantium Analytics Simulation -->
+                    <div class="certification-card glass rounded-xl p-6 hover:transform hover:scale-[1.03] transition-all duration-500 group relative overflow-hidden"
+                         data-cursor-certification>
+                        <div class="absolute top-4 right-4 w-10 h-10 bg-gradient-to-br from-purple-500/20 to-transparent rounded-full flex items-center justify-center">
+                            <span class="text-lg">📊</span>
+                        </div>
+                        <h3 class="text-lg font-bold mb-2 group-hover:text-primary transition-colors">Data Analytics Job Simulation</h3>
+                        <div class="flex items-center gap-2 mb-3">
+                            <div class="w-2 h-2 bg-purple-500 rounded-full"></div>
+                            <span class="text-sm text-gray-400">Quantium via Forage</span>
+                        </div>
+                        <p class="text-sm text-gray-300 mb-4">Data preparation, customer analytics, experimentation, uplift testing & commercial application</p>
+                        <div class="flex justify-between items-center">
+                            <span class="text-xs text-primary font-mono">Oct 2025</span>
+                            <span class="text-xs glass px-2 py-1 rounded">Advanced Analytics</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Issuing Companies Logos -->
+                <div class="mt-16 glass rounded-xl p-8">
+                    <h3 class="text-xl font-bold mb-6 text-center">Issued by Industry Leaders</h3>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                        <div class="text-center p-4 hover:scale-105 transition-transform">
+                            <div class="text-2xl mb-2">🔵</div>
+                            <div class="font-semibold">Cisco</div>
+                            <div class="text-xs text-gray-400">Networking Academy</div>
+                        </div>
+                        <div class="text-center p-4 hover:scale-105 transition-transform">
+                            <div class="text-2xl mb-2">🟢</div>
+                            <div class="font-semibold">Deloitte</div>
+                            <div class="text-xs text-gray-400">Big 4 Consulting</div>
+                        </div>
+                        <div class="text-center p-4 hover:scale-105 transition-transform">
+                            <div class="text-2xl mb-2">🔴</div>
+                            <div class="font-semibold">Tata Group</div>
+                            <div class="text-xs text-gray-400">Global Conglomerate</div>
+                        </div>
+                        <div class="text-center p-4 hover:scale-105 transition-transform">
+                            <div class="text-2xl mb-2">🟣</div>
+                            <div class="font-semibold">BCG X</div>
+                            <div class="text-xs text-gray-400">Tech & Digital</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Contact Section -->
+        <section id="contact" class="section py-20 px-6 md:px-12 lg:px-24 relative">
+            <div class="max-w-4xl mx-auto text-center">
+                <h2 class="text-4xl font-bold mb-6 scroll-text">
+                    Let's Connect
+                </h2>
+                <p class="text-xl text-gray-300 mb-12 max-w-2xl mx-auto">
+                    Seeking Data Analyst opportunities. Available for immediate start in Bangalore.
+                </p>
+                
+                <div class="grid md:grid-cols-3 gap-8 mb-12">
+                    <a href="mailto:prajwalshivakumar2005@gmail.com" 
+                       class="magnetic glass p-6 rounded-xl hover:border-primary/50 transition-all duration-300 group"
+                       data-cursor-magnetic>
+                        <div class="text-3xl mb-4 group-hover:scale-110 transition-transform">📧</div>
+                        <h3 class="font-bold mb-2 group-hover:text-primary transition-colors">Email</h3>
+                        <p class="text-gray-400 text-sm">prajwalshivakumar2005@gmail.com</p>
+                    </a>
+                    
+                    <a href="https://linkedin.com/in/prajwal-shivakumar-72081a384" target="_blank"
+                       class="magnetic glass p-6 rounded-xl hover:border-primary/50 transition-all duration-300 group"
+                       data-cursor-magnetic>
+                        <div class="text-3xl mb-4 group-hover:scale-110 transition-transform">💼</div>
+                        <h3 class="font-bold mb-2 group-hover:text-primary transition-colors">LinkedIn</h3>
+                        <p class="text-gray-400 text-sm">/in/prajwal-shivakumar</p>
+                    </a>
+                    
+                    <a href="https://github.com/prajwal185" target="_blank"
+                       class="magnetic glass p-6 rounded-xl hover:border-primary/50 transition-all duration-300 group"
+                       data-cursor-magnetic>
+                        <div class="text-3xl mb-4 group-hover:scale-110 transition-transform">💻</div>
+                        <h3 class="font-bold mb-2 group-hover:text-primary transition-colors">GitHub</h3>
+                        <p class="text-gray-400 text-sm">github.com/prajwal185</p>
+                    </a>
+                </div>
+                
+                <!-- Download Resume Button -->
+                <a href="#" 
+                   class="magnetic inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-primary to-blue-600 rounded-lg font-semibold text-lg hover:shadow-[0_0_30px_rgba(0,242,255,0.5)] transition-all duration-300 relative overflow-hidden group"
+                   data-cursor-magnetic>
+                    <span class="relative z-10">📄</span>
+                    <span class="relative z-10">Download Resume</span>
+                    <div class="absolute inset-0 bg-gradient-to-r from-primary/20 to-blue-600/20 transform -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
+                </a>
+            </div>
+        </section>
+        
+        <!-- Footer -->
+        <footer class="py-8 px-6 border-t border-gray-800/30 text-center relative">
+            <div class="max-w-6xl mx-auto">
+                <div class="flex flex-col md:flex-row justify-between items-center gap-6">
+                    <div class="flex items-center gap-4">
+                        <div class="flex items-center gap-2">
+                            <div class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                            <span class="text-sm">Status: <span class="text-green-400 font-mono">Available</span></span>
+                        </div>
+                        <div class="hidden md:block h-4 w-px bg-gray-700"></div>
+                        <div class="flex items-center gap-2">
+                            <div class="w-2 h-2 bg-primary rounded-full animate-pulse"></div>
+                            <span class="text-sm">Location: <span class="text-primary font-mono">Bengaluru, India</span></span>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <p class="text-gray-500 text-sm hover:text-primary transition-colors cursor-pointer">
+                            © 2024 Prajwal Shivakumar. All rights reserved.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </main>
+    
+    <!-- JavaScript for Interactive Effects -->
+    <script>
+        // Initialize variables
+        let cursor = document.querySelector('.cursor');
+        let cursorTrail = document.getElementById('cursor-trail');
+        let cursorGlow = document.querySelector('.cursor-glow');
+        let dataGrid = document.querySelector('.data-grid');
+        let scrollProgress = document.querySelector('.scroll-progress');
+        let sections = document.querySelectorAll('.section');
+        let skillContainers = document.querySelectorAll('.skill-container');
+        let magneticElements = document.querySelectorAll('[data-cursor-magnetic], .magnetic');
+        let terminalLines = document.querySelectorAll('.terminal-line');
+        let gridDistort = document.querySelector('.grid-distort');
+        let sparkleContainers = document.querySelectorAll('.sparkle-container');
+        let skillParticlesContainer = document.getElementById('skill-particles');
+        let certificationCards = document.querySelectorAll('.certification-card');
+        
+        // Trail positions
+        let trailPositions = [];
+        const TRAIL_LENGTH = 10;
+        
+        // Mouse move event for cursor effects
+        document.addEventListener('mousemove', (e) => {
+            // Store trail position
+            trailPositions.unshift({ x: e.clientX, y: e.clientY });
+            if (trailPositions.length > TRAIL_LENGTH) {
+                trailPositions.pop();
+            }
+            
+            // Update cursor position
+            cursor.style.left = e.clientX + 'px';
+            cursor.style.top = e.clientY + 'px';
+            
+            // Update trail
+            if (trailPositions.length > 2) {
+                cursorTrail.style.left = trailPositions[2].x + 'px';
+                cursorTrail.style.top = trailPositions[2].y + 'px';
+                cursorTrail.style.opacity = '0.5';
+            }
+            
+            // Update CSS variables for dynamic background
+            document.documentElement.style.setProperty('--cursor-x', e.clientX + 'px');
+            document.documentElement.style.setProperty('--cursor-y', e.clientY + 'px');
+            
+            // Distort grid near cursor
+            let distortX = (e.clientX / window.innerWidth - 0.5) * 20;
+            let distortY = (e.clientY / window.innerHeight - 0.5) * 20;
+            gridDistort.style.transform = `translate(${distortX}px, ${distortY}px)`;
+            
+            // Magnetic effect for elements
+            magneticElements.forEach(element => {
+                let rect = element.getBoundingClientRect();
+                let centerX = rect.left + rect.width / 2;
+                let centerY = rect.top + rect.height / 2;
+                
+                let distanceX = e.clientX - centerX;
+                let distanceY = e.clientY - centerY;
+                let distance = Math.sqrt(distanceX * distanceX + distanceY * distanceY);
+                
+                if (distance < 150) {
+                    let force = (150 - distance) / 150;
+                    let moveX = distanceX * force * 0.3;
+                    let moveY = distanceY * force * 0.3;
+                    
+                    element.style.transform = `translate(${moveX}px, ${moveY}px) scale(1.05)`;
+                    cursor.style.width = '15px';
+                    cursor.style.height = '15px';
+                } else {
+                    element.style.transform = 'translate(0, 0) scale(1)';
+                    cursor.style.width = '8px';
+                    cursor.style.height = '8px';
+                }
+            });
+            
+            // Sparkle effect on hover
+            sparkleContainers.forEach(container => {
+                let rect = container.getBoundingClientRect();
+                let isOver = e.clientX >= rect.left && e.clientX <= rect.right &&
+                             e.clientY >= rect.top && e.clientY <= rect.bottom;
+                
+                if (isOver && Math.random() > 0.7) {
+                    createSparkle(container, e.clientX - rect.left, e.clientY - rect.top);
+                }
+            });
+            
+            // Certification card hover effects
+            certificationCards.forEach(card => {
+                let rect = card.getBoundingClientRect();
+                let isOver = e.clientX >= rect.left && e.clientX <= rect.right &&
+                             e.clientY >= rect.top && e.clientY <= rect.bottom;
+                
+                if (isOver) {
+                    cursor.style.backgroundColor = '#7c3aed';
+                    cursor.style.transform = 'translate(-50%, -50%) scale(1.2)';
+                }
+            });
+        });
+        
+        // Mouse leave/enter document
+        document.addEventListener('mouseleave', () => {
+            cursor.style.opacity = '0';
+            cursorTrail.style.opacity = '0';
+        });
+        
+        document.addEventListener('mouseenter', () => {
+            cursor.style.opacity = '1';
+            cursorTrail.style.opacity = '0.5';
+        });
+        
+        // Click effect
+        document.addEventListener('click', (e) => {
+            // Cursor click animation
+            cursor.style.transform = 'translate(-50%, -50%) scale(0.5)';
+            cursor.style.backgroundColor = '#7c3aed';
+            
+            // Ripple effect
+            createRipple(e.clientX, e.clientY);
+            
+            setTimeout(() => {
+                cursor.style.transform = 'translate(-50%, -50%) scale(1)';
+                cursor.style.backgroundColor = '#00f2ff';
+            }, 150);
+            
+            // Data particles on click
+            for (let i = 0; i < 8; i++) {
+                createDataParticle(e.clientX, e.clientY);
+            }
+        });
+        
+        // Scroll events
+        window.addEventListener('scroll', () => {
+            // Update scroll progress bar
+            let winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            let height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            let scrolled = (winScroll / height) * 100;
+            document.documentElement.style.setProperty('--scroll-percentage', scrolled + '%');
+            
+            // Update data grid scale based on scroll
+            let scale = 1 + (scrolled / 300);
+            let rotate = scrolled / 100;
+            dataGrid.style.transform = `scale(${scale}) rotate(${rotate}deg)`;
+            
+            // Cursor trail changes with scroll
+            let trailSize = 20 + (scrolled / 2);
+            cursorTrail.style.width = trailSize + 'px';
+            cursorTrail.style.height = trailSize + 'px';
+            
+            // Section reveal animation
+            sections.forEach((section, index) => {
+                let rect = section.getBoundingClientRect();
+                let isVisible = rect.top < window.innerHeight * 0.75 && rect.bottom > 0;
+                
+                if (isVisible) {
+                    section.classList.add('active');
+                    
+                    // Stagger animation for terminal lines
+                    if (section.id === 'hero') {
+                        terminalLines.forEach((line, i) => {
+                            setTimeout(() => {
+                                line.classList.add('active');
+                            }, i * 100);
+                        });
+                    }
+                }
+            });
+            
+            // Skill bar animations
+            skillContainers.forEach((container, index) => {
+                let rect = container.getBoundingClientRect();
+                let isVisible = rect.top < window.innerHeight * 0.8 && rect.bottom > 0;
+                
+                if (isVisible) {
+                    setTimeout(() => {
+                        container.classList.add('active');
+                    }, index * 100);
+                    
+                    // Create particles for skills section
+                    if (container.closest('#skills') && Math.random() > 0.8) {
+                        createSkillParticle(container);
+                    }
+                }
+            });
+            
+            // Certification cards animation
+            certificationCards.forEach((card, index) => {
+                let rect = card.getBoundingClientRect();
+                let isVisible = rect.top < window.innerHeight * 0.8 && rect.bottom > 0;
+                
+                if (isVisible) {
+                    setTimeout(() => {
+                        card.style.opacity = '1';
+                        card.style.transform = 'translateY(0)';
+                    }, index * 100);
+                }
+            });
+            
+            // Parallax effect for hero section
+            let hero = document.getElementById('hero');
+            let scrolled2 = window.pageYOffset;
+            let rate = scrolled2 * -0.3;
+            hero.style.transform = `translate3d(0, ${rate}px, 0)`;
+            
+            // Background color shift based on scroll
+            let hueShift = scrolled / 10;
+            cursorGlow.style.filter = `hue-rotate(${hueShift}deg)`;
+        });
+        
+        // Initialize section visibility
+        setTimeout(() => {
+            sections.forEach(section => {
+                let rect = section.getBoundingClientRect();
+                let isVisible = rect.top < window.innerHeight;
+                
+                if (isVisible) {
+                    section.classList.add('active');
+                }
+            });
+            
+            // Initialize terminal lines
+            terminalLines.forEach((line, i) => {
+                setTimeout(() => {
+                    line.classList.add('active');
+                }, i * 100);
+            });
+            
+            // Initialize certification cards
+            certificationCards.forEach((card, i) => {
+                setTimeout(() => {
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, i * 100);
+            });
+        }, 500);
+        
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+                
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 100,
+                        behavior: 'smooth'
+                    });
+                    
+                    // Cursor animation on scroll to
+                    cursor.style.transform = 'translate(-50%, -50%) scale(1.5)';
+                    setTimeout(() => {
+                        cursor.style.transform = 'translate(-50%, -50%) scale(1)';
+                    }, 300);
+                }
+            });
+        });
+        
+        // Scroll indicator click
+        document.getElementById('scroll-indicator').addEventListener('click', () => {
+            window.scrollTo({
+                top: window.innerHeight,
+                behavior: 'smooth'
+            });
+        });
+        
+        // Particle creation functions
+        function createRipple(x, y) {
+            const ripple = document.createElement('div');
+            ripple.style.cssText = `
+                position: fixed;
+                width: 20px;
+                height: 20px;
+                border: 2px solid #00f2ff;
+                border-radius: 50%;
+                pointer-events: none;
+                z-index: 9997;
+                left: ${x}px;
+                top: ${y}px;
+                transform: translate(-50%, -50%) scale(0);
+                opacity: 0.7;
+                transition: all 0.6s ease;
+            `;
+            
+            document.body.appendChild(ripple);
+            
+            setTimeout(() => {
+                ripple.style.transform = 'translate(-50%, -50%) scale(10)';
+                ripple.style.opacity = '0';
+            }, 10);
+            
+            setTimeout(() => {
+                ripple.remove();
+            }, 600);
+        }
+        
+        function createDataParticle(x, y) {
+            const particle = document.createElement('div');
+            particle.classList.add('data-particle');
+            particle.style.left = x + 'px';
+            particle.style.top = y + 'px';
+            
+            document.body.appendChild(particle);
+            
+            // Random direction
+            let angle = Math.random() * Math.PI * 2;
+            let speed = 1 + Math.random() * 2;
+            let vx = Math.cos(angle) * speed;
+            let vy = Math.sin(angle) * speed;
+            
+            // Animate particle
+            let opacity = 1;
+            let size = 3;
+            
+            function animate() {
+                x += vx;
+                y += vy;
+                opacity -= 0.02;
+                size -= 0.02;
+                
+                if (opacity <= 0) {
+                    particle.remove();
+                    return;
+                }
+                
+                particle.style.left = x + 'px';
+                particle.style.top = y + 'px';
+                particle.style.opacity = opacity;
+                particle.style.width = size + 'px';
+                particle.style.height = size + 'px';
+                
+                requestAnimationFrame(animate);
+            }
+            
+            animate();
+        }
+        
+        function createSparkle(container, x, y) {
+            const sparkle = document.createElement('div');
+            sparkle.classList.add('sparkle');
+            sparkle.style.left = x + 'px';
+            sparkle.style.top = y + 'px';
+            
+            container.appendChild(sparkle);
+            
+            // Random size
+            let size = 2 + Math.random() * 4;
+            sparkle.style.width = size + 'px';
+            sparkle.style.height = size + 'px';
+            
+            // Animate
+            sparkle.style.opacity = '1';
+            sparkle.style.transform = `scale(0) rotate(0deg)`;
+            
+            setTimeout(() => {
+                sparkle.style.transform = `scale(1) rotate(180deg)`;
+                sparkle.style.opacity = '0.7';
+            }, 10);
+            
+            setTimeout(() => {
+                sparkle.style.opacity = '0';
+                setTimeout(() => sparkle.remove(), 300);
+            }, 400);
+        }
+        
+        function createSkillParticle(container) {
+            if (!skillParticlesContainer) return;
+            
+            const particle = document.createElement('div');
+            particle.classList.add('data-particle');
+            
+            const rect = container.getBoundingClientRect();
+            const x = rect.left + Math.random() * rect.width;
+            const y = rect.top + Math.random() * rect.height;
+            
+            particle.style.left = x + 'px';
+            particle.style.top = y + 'px';
+            particle.style.width = '2px';
+            particle.style.height = '2px';
+            
+            skillParticlesContainer.appendChild(particle);
+            
+            // Float animation
+            const duration = 2 + Math.random() * 3;
+            particle.style.setProperty('--duration', `${duration}s`);
+            particle.style.setProperty('--x', '0px');
+            particle.style.setProperty('--y', '0px');
+            
+            setTimeout(() => {
+                particle.style.animation = 'particle-float';
+                particle.style.setProperty('--x', `${Math.random() * 20 - 10}px`);
+                particle.style.setProperty('--y', `${Math.random() * -30 - 10}px`);
+            }, 10);
+            
+            setTimeout(() => {
+                particle.style.opacity = '0';
+                setTimeout(() => particle.remove(), 1000);
+            }, duration * 500);
+        }
+        
+        // Dynamic text rotation
+        const dynamicTexts = [
+            ">>> Transforming data into strategic insights _",
+            ">>> Machine Learning specialist with 85% accuracy _",
+            ">>> Statistical modeling for anomaly detection _",
+            ">>> Real-time KPI tracking dashboards _",
+            ">>> Data-driven decision frameworks _"
+        ];
+        
+        let currentTextIndex = 0;
+        const dynamicTextElement = document.getElementById('dynamic-text');
+        
+        function rotateDynamicText() {
+            currentTextIndex = (currentTextIndex + 1) % dynamicTexts.length;
+            dynamicTextElement.textContent = dynamicTexts[currentTextIndex];
+            dynamicTextElement.classList.remove('active');
+            
+            setTimeout(() => {
+                dynamicTextElement.classList.add('active');
+            }, 50);
+        }
+        
+        // Change text every 4 seconds
+        setInterval(rotateDynamicText, 4000);
+        
+        // Create initial skill particles
+        function initializeSkillParticles() {
+            for (let i = 0; i < 15; i++) {
+                setTimeout(() => {
+                    if (skillParticlesContainer) {
+                        const particle = document.createElement('div');
+                        particle.classList.add('data-particle');
+                        particle.style.left = Math.random() * 100 + 'vw';
+                        particle.style.top = Math.random() * 100 + 'vh';
+                        particle.style.opacity = Math.random() * 0.3;
+                        
+                        skillParticlesContainer.appendChild(particle);
+                    }
+                }, i * 100);
+            }
+        }
+        
+        // Initialize
+        window.dispatchEvent(new Event('scroll'));
+        initializeSkillParticles();
+        
+        // Mouse wheel effects
+        let wheelTimeout;
+        document.addEventListener('wheel', () => {
+            cursor.style.backgroundColor = '#7c3aed';
+            
+            if (wheelTimeout) clearTimeout(wheelTimeout);
+            wheelTimeout = setTimeout(() => {
+                cursor.style.backgroundColor = '#00f2ff';
+            }, 100);
+        });
+    </script>
 </body>
 </html>
